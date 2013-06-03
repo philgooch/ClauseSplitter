@@ -1,0 +1,15 @@
+Phase:	Clause
+Input:  Token Split Sentence ClauseSplit
+Options: control = appelt
+
+
+
+Rule: MatchClauseSplit1
+(
+	({ClauseSplit.type ==~ "cc|pp|rb|wh"})?
+	({Token, !ClauseSplit, !Split})+
+):c
+-->
+:c.Clause = {}
+
+

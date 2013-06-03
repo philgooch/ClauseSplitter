@@ -1,0 +1,158 @@
+Phase:	ClauseSplit
+Input:  Token Split Sentence
+Options: control = all
+
+
+
+MACRO: TWO_TOKEN_WINDOW
+(
+	(
+		{Token.category =~ "^JJ|RB"}
+	)[0, 2]
+)
+
+
+MACRO: NP
+(
+	( {Token.category =~ "^PRP"} )
+	|
+	(
+		({Token.category == DT})?
+		({Token.category =~ "^NN"})[1, 4]
+	)
+)
+
+
+MACRO: NNP
+(
+	( {Token.category =~ "^PRP"} )
+	|
+	(
+		({Token.category == DT})?
+		({Token.category =~ "^NNP"})[1, 4]
+	)
+)
+
+
+MACRO: VG
+(
+	{Token.category =~ "^VB"} |
+	(
+		{Token.category =~ "^MD"}
+		{Token.category =~ "^VB"}
+	)
+)
+
+
+
+
+Rule: MatchClauseSplit1
+(
+	(
+		{Token.string ==~ ","}
+	):c
+	({Token.category ==~ "CC"})?
+	(TWO_TOKEN_WINDOW)
+	(NP)?
+	({Token.category ==~ "IN"})?
+	(VG)
+)
+-->
+:c.ClauseSplit={type=commanolist}
+
+
+Rule: MatchClauseSplit2
+(
+	({Token.category ==~ "CC"}):c
+	(TWO_TOKEN_WINDOW)
+	(NP)?
+	({Token.category ==~ "IN"})?
+	(VG)
+)
+-->
+:c.ClauseSplit={type=cc}
+
+
+Rule: MatchClauseSplit2a
+(
+	({Token.string ==~ "(?i)but|although|however"}):c
+)
+-->
+:c.ClauseSplit={type=cc}
+
+
+Rule: MatchClauseSplit3
+(
+	({Token.category ==~ "IN"}):c
+	(NNP)
+	({Token.category ==~ "IN"})?
+	(VG)
+)
+-->
+:c.ClauseSplit={type=pp}
+
+
+
+Rule: MatchClauseSplit4
+(
+	(
+		{Token.string ==~ ","}
+	):c
+	{Token.category ==~ "IN|RB"}
+)
+-->
+:c.ClauseSplit={type=commafor}
+
+
+Rule: MatchClauseSplit4a
+(
+	{Token.category ==~ "IN|RB"}
+	(
+		{Token.string ==~ ","}
+	):c
+)
+-->
+:c.ClauseSplit={type=forcomma}
+
+
+
+Rule: MatchClauseSplit5
+(
+	{Token.string ==~ "[;:]"} |
+	{Token.kind == punctuation, Token.position == endpunct} |
+	{Token.kind == punctuation, Token.subkind == dashpunct}
+):c
+{!Token.kind == punctuation}
+-->
+:c.ClauseSplit={type=punct}
+
+
+
+Rule: MatchClauseSplit6
+(
+	{Token.category != "IN"}
+	({Token.category =~ "^WD|WR|WP"}):c
+)
+-->
+:c.ClauseSplit={type=wh}
+
+
+Rule: MatchClauseSplit6a
+(
+	({Token.category == "IN"}):c
+	{Token.category =~ "^WD|WR|WP"}
+)
+-->
+:c.ClauseSplit={type=wh}
+
+
+Rule: MatchClauseSplit7
+(
+	{Token.category !~ "^VB"}
+	({Token.category =~ "^RB"}):c
+	(NP)
+)
+-->
+:c.ClauseSplit={type=rb}
+
+
