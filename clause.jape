@@ -6,7 +6,7 @@ Options: control = appelt
 
 Rule: MatchClauseSplit1
 (
-	({ClauseSplit.type ==~ "cc|pp|rb|wh"})?
+	({ClauseSplit.type ==~ "cc|pp|rb|wh"}({ClauseSplit})?)?
 	({Token, !ClauseSplit, !Split})+
 ):c
 -->
