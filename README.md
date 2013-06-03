@@ -17,3 +17,5 @@ How to use this plugin
 ClauseSplitter is compatible with [GATE version 7.1](http://www.gate.ac.uk/) and higher. Simply create an instance of the JAPE or JAPE Plus Transducer, and point it to the _main.jape_ file in this folder.
 
 Be sure to add a Tokenizer, Sentence Splitter and POS Tagger to your pipeline before running this plugin.
+
+You can replace calls to the VG macro with the {VG} annotation if you are using the ANNIE VP Chunker. If so, make sure you add VG to the list of input annotations.
