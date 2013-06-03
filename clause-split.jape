@@ -36,10 +36,13 @@ MACRO: NNP
 
 MACRO: VG
 (
-	{Token.category =~ "^VB"} |
+	({Token.string ==~ "(?i)to"})?
 	(
-		{Token.category =~ "^MD"}
-		{Token.category =~ "^VB"}
+		{Token.category =~ "^VB"} |
+		(
+			{Token.category =~ "^MD"}
+			{Token.category =~ "^VB"}
+		)
 	)
 )
 
@@ -90,6 +93,7 @@ Rule: MatchClauseSplit3
 )
 -->
 :c.ClauseSplit={type=pp}
+
 
 
 
@@ -144,6 +148,17 @@ Rule: MatchClauseSplit6a
 )
 -->
 :c.ClauseSplit={type=wh}
+
+
+Rule: MatchClauseSplit6b
+(
+	(VG)
+	({Token.category ==~ "IN", Token.string ==~ "(?i)that|which"}):c
+	{Token.kind == word}
+)
+-->
+:c.ClauseSplit={type=wh}
+
 
 
 Rule: MatchClauseSplit7
