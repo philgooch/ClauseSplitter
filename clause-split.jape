@@ -1,13 +1,13 @@
 Phase:	ClauseSplit
 Input:  Token Split Sentence
-Options: control = all
+Options: control = appelt
 
 
 
 MACRO: TWO_TOKEN_WINDOW
 (
 	(
-		{Token.category =~ "^JJ|RB"}
+		{Token.category =~ "^JJ|IN|RB|WD|WR|WP"}
 	)[0, 2]
 )
 
@@ -18,7 +18,15 @@ MACRO: NP
 	|
 	(
 		({Token.category == DT})?
+		({Token.category =~ "^RB"})?
+		({Token.category =~ "^JJ"})[0, 4]
 		({Token.category =~ "^NN"})[1, 4]
+	)
+	|
+	(
+		{Token.category == DT}
+		({Token.category =~ "^RB"})?
+		({Token.category =~ "^JJ"})
 	)
 )
 
@@ -29,8 +37,18 @@ MACRO: NNP
 	|
 	(
 		({Token.category == DT})?
+		({Token.category =~ "^RB"})?
+		({Token.category =~ "^JJ"})[0, 4]
 		({Token.category =~ "^NNP"})[1, 4]
 	)
+)
+
+
+MACRO: PP
+(
+	(NP)
+	{Token.category == IN}
+	((NP) | (NNP))
 )
 
 
@@ -38,7 +56,20 @@ MACRO: VG
 (
 	({Token.string ==~ "(?i)to"})?
 	(
-		{Token.category =~ "^VB"} |
+		({Token.category ==~ "VB|VBD|VBN|VBP|VBZ"}) |
+		(
+			{Token.category =~ "^MD"}
+			{Token.category ==~ "VB|VBD|VBN|VBP|VBZ"}
+		)
+	)
+)
+
+
+MACRO: VB
+(
+	({Token.string ==~ "(?i)to"})?
+	(
+		({Token.category =~ "^VB"}) |
 		(
 			{Token.category =~ "^MD"}
 			{Token.category =~ "^VB"}
@@ -55,20 +86,65 @@ Rule: MatchClauseSplit1
 		{Token.string ==~ ","}
 	):c
 	({Token.category ==~ "CC"})?
+	(VB)?
 	(TWO_TOKEN_WINDOW)
-	(NP)?
-	({Token.category ==~ "IN"})?
-	(VG)
+	(NP|PP)[1, 2]
+	({Token.category ==~ "IN|CC|RB"})?
+	(VB)
 )
 -->
 :c.ClauseSplit={type=commanolist}
 
 
+
+Rule: MatchClauseSplit1a
+(
+	(
+		{Token.string ==~ ","}
+	):c
+	{Token.category ==~ "CC"}
+	(VB)
+	(TWO_TOKEN_WINDOW)
+	(NP|PP)[1, 2]
+)
+-->
+:c.ClauseSplit={type=commanolist}
+
+
+Rule: MatchClauseSplit1b
+(
+	(
+		{Token.string ==~ ","}
+	):c
+	(VB)
+	(TWO_TOKEN_WINDOW)
+	(NP|PP)[1, 2]
+	{Token.category ==~ "RB|JJ"}
+)
+-->
+:c.ClauseSplit={type=commanolist}
+
+
+Rule: MatchClauseSplit1c
+(
+	(
+		{Token.string ==~ ","}
+	):c
+	{Token.category ==~ "TO|MD"}
+	(TWO_TOKEN_WINDOW)
+	{Token.category =~ "^VB"}
+)
+-->
+:c.ClauseSplit={type=commanolist}
+
+
+
 Rule: MatchClauseSplit2
 (
+	{Token.category != "MD"}
 	({Token.category ==~ "CC"}):c
 	(TWO_TOKEN_WINDOW)
-	(NP)?
+	(NP|PP)[0, 2]
 	({Token.category ==~ "IN"})?
 	(VG)
 )
@@ -86,8 +162,8 @@ Rule: MatchClauseSplit2a
 
 Rule: MatchClauseSplit3
 (
-	({Token.category ==~ "IN"}):c
-	(NNP)
+	({Token.category ==~ "IN"})[1,2]:c
+	(NNP)[1, 2]
 	({Token.category ==~ "IN"})?
 	(VG)
 )
@@ -123,7 +199,6 @@ Rule: MatchClauseSplit4a
 Rule: MatchClauseSplit5
 (
 	{Token.string ==~ "[;:]"} |
-	{Token.kind == punctuation, Token.position == endpunct} |
 	{Token.kind == punctuation, Token.subkind == dashpunct}
 ):c
 {!Token.kind == punctuation}
@@ -134,7 +209,7 @@ Rule: MatchClauseSplit5
 
 Rule: MatchClauseSplit6
 (
-	{Token.category != "IN"}
+	{Token.category !=~ "IN|TO", Token.category !~ "^VB"}
 	({Token.category =~ "^WD|WR|WP"}):c
 )
 -->
@@ -163,9 +238,9 @@ Rule: MatchClauseSplit6b
 
 Rule: MatchClauseSplit7
 (
-	{Token.category !~ "^VB"}
+	{Token.category !~ "^VB|IN|WR"}
 	({Token.category =~ "^RB"}):c
-	(NP)
+	(NP|PP)
 )
 -->
 :c.ClauseSplit={type=rb}
