@@ -240,7 +240,11 @@ Rule: MatchClauseSplit7
 (
 	{Token.category !~ "^VB|IN|WR"}
 	({Token.category =~ "^RB"}):c
-	(NP|PP)
+	(VG)?
+	(TWO_TOKEN_WINDOW)
+	(NP|PP)[1, 2]
+	(TWO_TOKEN_WINDOW)
+	(VG)
 )
 -->
 :c.ClauseSplit={type=rb}
