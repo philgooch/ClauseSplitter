@@ -9,7 +9,7 @@ See LICENSE.txt file for license details.
 ClauseSplitter for GATE
 ================================================
 
-This crude plugin attempts to split English sentences into clauses, using some simple grammatical rules. It could probably be adapted for other European languages.
+This plugin splits English sentences into clauses, using some simple grammatical patterns. It could probably be adapted for other European languages.
 
 How to use this plugin
 =======================
