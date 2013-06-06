@@ -18,4 +18,4 @@ ClauseSplitter is compatible with [GATE version 7.1](http://www.gate.ac.uk/) and
 
 Be sure to add a Tokenizer, Sentence Splitter and POS Tagger to your pipeline before running this plugin.
 
-You can replace calls to the VG macro with the {VG} annotation if you are using the ANNIE VP Chunker, or with {Predicate} if you are using the Predicate Phrase Chunker. If so, make sure you add either VG or Predicate to the list of input annotations.
+You can replace calls to the VG and VB macros with the {VG} annotation if you are using the ANNIE VP Chunker, or with {Predicate} if you are using the Predicate Phrase Chunker. If so, make sure you add either VG or Predicate to the list of input annotations.
