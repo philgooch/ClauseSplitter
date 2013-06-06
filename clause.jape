@@ -4,12 +4,10 @@ Options: control = appelt
 
 
 
-Rule: MatchClauseSplit1
+Rule: MatchClause1
 (
-	({Token.string ==~ "[\\(\\[]"})?
 	({ClauseSplit.type ==~ "cc|pp|rb|wh"}({ClauseSplit})?)?
-	({Token, !Token.string ==~ "[\\(\\[]", !ClauseSplit, !Split})+
-	({Token.string ==~ "[\\)\\]]"})?
+	({Token, !ClauseSplit, !Split})+
 ):c
 -->
 :c.Clause = {}
