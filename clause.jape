@@ -6,8 +6,10 @@ Options: control = appelt
 
 Rule: MatchClauseSplit1
 (
+	({Token.string ==~ "[\\(\\[]"})?
 	({ClauseSplit.type ==~ "cc|pp|rb|wh"}({ClauseSplit})?)?
-	({Token, !ClauseSplit, !Split})+
+	({Token, !Token.string ==~ "[\\(\\[]", !ClauseSplit, !Split})+
+	({Token.string ==~ "[\\)\\]]"})?
 ):c
 -->
 :c.Clause = {}

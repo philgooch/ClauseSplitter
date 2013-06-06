@@ -7,7 +7,7 @@ Options: control = appelt
 MACRO: TWO_TOKEN_WINDOW
 (
 	(
-		{Token.category =~ "^JJ|IN|RB|WD|WR|WP"}
+		{Token.category =~ "^JJ|IN|RB|WD|WR|WP|EX"}
 	)[0, 2]
 )
 
@@ -54,7 +54,9 @@ MACRO: PP
 
 MACRO: VG
 (
+	({Token.category =~ "^RB"})?
 	({Token.string ==~ "(?i)to"})?
+	({Token.category =~ "^RB"})?
 	(
 		({Token.category ==~ "VB|VBD|VBN|VBP|VBZ"}) |
 		(
@@ -67,7 +69,9 @@ MACRO: VG
 
 MACRO: VB
 (
+	({Token.category =~ "^RB"})?
 	({Token.string ==~ "(?i)to"})?
+	({Token.category =~ "^RB"})?
 	(
 		({Token.category =~ "^VB"}) |
 		(
@@ -237,9 +241,9 @@ Rule: MatchClauseSplit6b
 
 
 Rule: MatchClauseSplit7
+{Split}
 (
-	{Token.category !~ "^VB|IN|WR"}
-	({Token.category =~ "^RB"}):c
+	({Token.category =~ "^RB"})[1, 3]:c
 	(VG)?
 	(TWO_TOKEN_WINDOW)
 	(NP|PP)[1, 2]
